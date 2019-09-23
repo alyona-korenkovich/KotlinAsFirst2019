@@ -5,16 +5,6 @@ package lesson3.task1
 import kotlin.math.abs
 import kotlin.math.sqrt
 
-fun countsOfDigits(n: Int): Int {
-    var number = n
-    var count = 0
-    while (number!=0) {
-        count++
-        number/=10
-    }
-    return count
-}
-
 /**
  * Пример
  *
@@ -84,7 +74,7 @@ fun digitNumber(n: Int): Int {
     do {
         count++
         number /= 10
-    } while (number > 0)
+    } while (number != 0)
     return count
 }
 
@@ -178,7 +168,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean {
     var k = false
-    for (i in 1..n) {
+    for (i in 0..n) {
         if (i >= sqrt(m.toDouble()) && i <= sqrt(n.toDouble())) {
             k = true
             break

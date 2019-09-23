@@ -67,7 +67,7 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  */
 fun ageDescription(age: Int): String {
     if (age%10 == 1 && age%100 != 11) return ("$age год")
-    return if ((age%10 == 2 || age%10 == 3 || age%10 == 4) && age%100 != 12) ("$age года")
+    return if ((age%10 == 2 || age%10 == 3 || age%10 == 4) && age%100 != 12 && age%100 != 13 && age%100 != 14) ("$age года")
     else ("$age лет")
 }
 
@@ -125,9 +125,8 @@ fun rookOrBishopThreatens(
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
 ): Int {
-    val distance = sqrt(((kingX-bishopX)*(kingX-bishopX)+(kingY-bishopY)*(kingY-bishopY))*1.0)
-    return if (((kingX == rookX) || (kingY == rookY)) && (abs(kingX-bishopX)==abs(kingY-bishopY)) && (distance == (abs(kingX-bishopX)*sqrt(2*1.0)))) (3)
-    else if ((abs(kingX-bishopX)==abs(kingY-bishopY)) && (distance == (abs(kingX-bishopX)*sqrt(2*1.0)))) (2)
+    return if (((kingX == rookX) || (kingY == rookY)) && (abs(kingX-bishopX) == abs(kingY-bishopY))) (3)
+    else if (abs(kingX-bishopX)==abs(kingY-bishopY)) (2)
     else if (kingX == rookX || kingY == rookY) (1)
     else (0)
 }
