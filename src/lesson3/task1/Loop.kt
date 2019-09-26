@@ -5,6 +5,17 @@ package lesson3.task1
 import kotlin.math.abs
 import kotlin.math.sqrt
 
+fun gcd(m: Int, n: Int): Int {
+    var a = m
+    var b = n
+    while (a != 0 && b != 0) {
+        if (a > b) a %= b
+        else b %= a
+    }
+    return a + b
+}
+
+
 /**
  * Пример
  *
@@ -87,9 +98,9 @@ fun digitNumber(n: Int): Int {
 fun fib(n: Int): Int {
     var a = 0
     var b = 1
-    for (i in 0..n-2) {
-            b += a
-            a = b - a
+    for (i in 0..n - 2) {
+        b += a
+        a = b - a
     }
     return b
 }
@@ -101,13 +112,7 @@ fun fib(n: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int {
-    var a = m
-    var b = n
-    while (a!=b) {
-        if (a>b) a-=b
-        else b-=a
-    }
-    return m*(n/a)
+    return abs(m * n) / gcd(m, n)
 }
 
 /**
@@ -116,14 +121,12 @@ fun lcm(m: Int, n: Int): Int {
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    var divisor = 2
-    for (i in divisor..n) {
-        if (n%i==0) {
-            divisor = i
-            break
+    for (i in 2..sqrt(n.toDouble()).toInt()) {
+        if (n % i == 0) {
+            return i
         }
     }
-    return divisor
+    return n
 }
 
 /**
@@ -132,14 +135,7 @@ fun minDivisor(n: Int): Int {
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int {
-    var divisor = n-1
-    for (i in divisor downTo 1) {
-        if (n%i==0) {
-            divisor = i
-            break
-        }
-    }
-    return divisor
+    return n / minDivisor(n)
 }
 
 /**
@@ -150,13 +146,7 @@ fun maxDivisor(n: Int): Int {
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
 fun isCoPrime(m: Int, n: Int): Boolean {
-    var a = m
-    var b = n
-    while (a!=b) {
-        if (a>b) a-=b
-        else b-=a
-    }
-    return a==1
+    return gcd(m, n) == 1
 }
 
 /**
@@ -167,14 +157,12 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean {
-    var k = false
-    for (i in 0..n) {
+    for (i in sqrt(m.toDouble()).toInt()..sqrt(n.toDouble()).toInt()) {
         if (i >= sqrt(m.toDouble()) && i <= sqrt(n.toDouble())) {
-            k = true
-            break
+            return true
         }
     }
-    return k
+    return false
 }
 
 
@@ -197,9 +185,9 @@ fun squareBetweenExists(m: Int, n: Int): Boolean {
 fun collatzSteps(x: Int): Int {
     var count = 0
     var a = x
-    while (a!=1) {
-        if (a%2==0) a/=2
-        else a = 3*a + 1
+    while (a != 1) {
+        if (a % 2 == 0) a /= 2
+        else a = 3 * a + 1
         count++
     }
     return count
@@ -237,9 +225,9 @@ fun cos(x: Double, eps: Double): Double = TODO()
 fun revert(n: Int): Int {
     var oldNumber = n
     var newNumber = 0
-    while (oldNumber>0) {
-        newNumber = newNumber*10 + oldNumber%10
-        oldNumber/=10
+    while (oldNumber > 0) {
+        newNumber = newNumber * 10 + oldNumber % 10
+        oldNumber /= 10
     }
     return newNumber
 }
@@ -254,13 +242,7 @@ fun revert(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun isPalindrome(n: Int): Boolean {
-    var oldNumber = n
-    var newNumber = 0
-    while (oldNumber>0) {
-        newNumber = newNumber*10 + oldNumber%10
-        oldNumber/=10
-    }
-    return newNumber == n
+    return revert(n) == n
 }
 
 /**

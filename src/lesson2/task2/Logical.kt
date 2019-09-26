@@ -22,10 +22,7 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  * Определить, счастливое ли заданное число, вернуть true, если это так.
  */
 fun isNumberHappy(number: Int): Boolean {
-    return when ((number/1000+number/100%10)==(number/10%10+number%10)) {
-        true -> true
-        false -> false
-    }
+    return (number / 1000 + number / 100 % 10) == (number / 10 % 10 + number % 10)
 }
 
 /**
@@ -36,7 +33,7 @@ fun isNumberHappy(number: Int): Boolean {
  * Считать, что ферзи не могут загораживать друг друга.
  */
 fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
-    return x1==x2 || y1==y2 || (abs(x1-x2) == abs(y1-y2))
+    return x1 == x2 || y1 == y2 || (abs(x1 - x2) == abs(y1 - y2))
 }
 
 
@@ -48,11 +45,11 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
  */
 fun daysInMonth(month: Int, year: Int): Int {
     when (month) {
-        1, 3, 5, 7, 8, 10, 12 -> return (31)
-        4, 6, 9, 11 -> return (30)
+        1, 3, 5, 7, 8, 10, 12 -> return 31
+        4, 6, 9, 11 -> return 30
     }
-    return if ((year%400==0 || (year%4==0 && year%100!=0)) && month == 2) (29)
-    else (28)
+    return if (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)) 29
+    else 28
 }
 
 /**
@@ -66,7 +63,7 @@ fun circleInside(
     x1: Double, y1: Double, r1: Double,
     x2: Double, y2: Double, r2: Double
 ): Boolean {
-    return (r2-r1)>=sqrt((x1-x2).pow(2)+(y1-y2).pow(2))
+    return (r2 - r1) >= sqrt((x1 - x2).pow(2) + (y1 - y2).pow(2))
 }
 
 /**
@@ -79,7 +76,9 @@ fun circleInside(
  * Вернуть true, если кирпич пройдёт
  */
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    return if ((a<=r && b<=s) || (a<=s && b<=r)) true
-    else if ((b<=r && c<=s) || (c<=r && b<=s)) true
-    else (a<=r && c<=s) || (c<=r && a<=s)
+    val minHoleSide = minOf(r, s)
+    val maxHoleSide = maxOf(r, s)
+    val minBrickSide = minOf(a, b, c)
+    val middleBrickSide = a + b + c - minBrickSide - maxOf(a, b, c)
+    return (minBrickSide <= minHoleSide && middleBrickSide <= maxHoleSide)
 }
