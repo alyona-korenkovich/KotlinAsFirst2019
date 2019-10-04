@@ -3,6 +3,7 @@
 package lesson3.task1
 
 import kotlin.math.abs
+import kotlin.math.pow
 import kotlin.math.sqrt
 
 fun gcd(m: Int, n: Int): Int {
@@ -112,7 +113,7 @@ fun fib(n: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int {
-    return abs(m * n) / gcd(m, n)
+    return m / gcd(m, n) * n
 }
 
 /**
@@ -264,7 +265,24 @@ fun hasDifferentDigits(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = TODO()
+fun squareSequenceDigit(n: Int): Int {
+    var sequenceLength = 1
+    var squareDigit = 1
+    var i = 1
+    while (n > sequenceLength) {
+        i++
+        squareDigit = i * i
+        sequenceLength += digitNumber(squareDigit)
+    }
+    var k = 0
+    for (j in 1..digitNumber(squareDigit)) {
+        if (n - sequenceLength + digitNumber(squareDigit) - j == 0) {
+            k = j
+            break
+        }
+    }
+    return (squareDigit / 10.0.pow(digitNumber(squareDigit) - k).toInt()) % 10
+}
 
 /**
  * Сложная
@@ -274,5 +292,22 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  * Например, 2-я цифра равна 1, 9-я 2, 14-я 5.
  *
  * Использовать операции со строками в этой задаче запрещается.
- */
-fun fibSequenceDigit(n: Int): Int = TODO()
+ **/
+fun fibSequenceDigit(n: Int): Int {
+    var sequenceLength = 0
+    var i = 0
+    var lastI = 0
+    while (n > sequenceLength) {
+        i++
+        lastI = fib(i)
+        sequenceLength += digitNumber(lastI)
+    }
+    var k = 0
+    for (j in 1..digitNumber(lastI)) {
+        if (n - sequenceLength + digitNumber(lastI) - j == 0) {
+            k = j
+            break
+        }
+    }
+    return (lastI / 10.0.pow(digitNumber(lastI) - k).toInt()) % 10
+}
