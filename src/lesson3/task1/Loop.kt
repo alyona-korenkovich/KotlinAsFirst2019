@@ -265,23 +265,26 @@ fun hasDifferentDigits(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int {
-    var sequenceLength = 1
-    var squareDigit = 1
-    var i = 1
+fun sequenceDigit(n: Int, a: (Int) -> Int): Int {
+    var sequenceLength = 0
+    var i = 0
     while (n > sequenceLength) {
         i++
-        squareDigit = i * i
-        sequenceLength += digitNumber(squareDigit)
+        sequenceLength += digitNumber(a(i))
     }
     var k = 0
-    for (j in 1..digitNumber(squareDigit)) {
-        if (n - sequenceLength + digitNumber(squareDigit) - j == 0) {
+    for (j in 1..digitNumber(a(i))) {
+        if (n - sequenceLength + digitNumber(a(i)) == j) {
             k = j
             break
         }
     }
-    return (squareDigit / 10.0.pow(digitNumber(squareDigit) - k).toInt()) % 10
+    return (a(i) / 10.0.pow(digitNumber(a(i)) - k).toInt()) % 10
+}
+
+fun squareSequenceDigit(n: Int): Int {
+    val sqrOfDigit = { a: Int -> a * a }
+    return sequenceDigit(n, sqrOfDigit)
 }
 
 /**
@@ -294,20 +297,6 @@ fun squareSequenceDigit(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  **/
 fun fibSequenceDigit(n: Int): Int {
-    var sequenceLength = 0
-    var i = 0
-    var lastI = 0
-    while (n > sequenceLength) {
-        i++
-        lastI = fib(i)
-        sequenceLength += digitNumber(lastI)
-    }
-    var k = 0
-    for (j in 1..digitNumber(lastI)) {
-        if (n - sequenceLength + digitNumber(lastI) - j == 0) {
-            k = j
-            break
-        }
-    }
-    return (lastI / 10.0.pow(digitNumber(lastI) - k).toInt()) % 10
+    val lastFib = { a: Int -> fib(a) }
+    return sequenceDigit(n, lastFib)
 }
