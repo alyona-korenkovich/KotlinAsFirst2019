@@ -268,23 +268,17 @@ fun hasDifferentDigits(n: Int): Boolean = TODO()
 fun sequenceDigit(n: Int, a: (Int) -> Int): Int {
     var sequenceLength = 0
     var i = 0
+    var lastI = 0
     while (n > sequenceLength) {
         i++
-        sequenceLength += digitNumber(a(i))
+        lastI = a(i)
+        sequenceLength += digitNumber(lastI)
     }
-    var k = 0
-    for (j in 1..digitNumber(a(i))) {
-        if (n - sequenceLength + digitNumber(a(i)) == j) {
-            k = j
-            break
-        }
-    }
-    return (a(i) / 10.0.pow(digitNumber(a(i)) - k).toInt()) % 10
+    return (lastI / 10.0.pow(sequenceLength - n).toInt()) % 10
 }
 
 fun squareSequenceDigit(n: Int): Int {
-    val sqrOfDigit = { a: Int -> a * a }
-    return sequenceDigit(n, sqrOfDigit)
+    return sequenceDigit(n) { a: Int -> a * a }
 }
 
 /**
@@ -296,7 +290,5 @@ fun squareSequenceDigit(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  **/
-fun fibSequenceDigit(n: Int): Int {
-    val lastFib = { a: Int -> fib(a) }
-    return sequenceDigit(n, lastFib)
-}
+
+fun fibSequenceDigit(n: Int): Int = sequenceDigit(n, ::fib)
