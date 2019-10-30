@@ -192,10 +192,11 @@ fun times(a: List<Int>, b: List<Int>): Int {
  */
 fun polynom(p: List<Int>, x: Int): Int {
     val a = mutableListOf<Int>()
+    val b = x.toDouble()
     return if (p.isEmpty()) 0
     else {
         for (i in p.indices) {
-            a.add((p[i] * (x.toDouble()).pow(i)).toInt())
+            a.add(p[i] * (b.pow(i)).toInt())
         }
         a.sum()
     }
@@ -263,10 +264,10 @@ fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*
 fun convert(n: Int, base: Int): List<Int> {
     val list = mutableListOf<Int>()
     var number = n
-    while (number != 0) {
+    do {
         list.add(number % base)
         number /= base
-    }
+    } while (number != 0)
     return list.asReversed()
 }
 
@@ -285,14 +286,14 @@ fun convertToString(n: Int, base: Int): String {
     val myList = CharRange('a', 'z').toList()
     var string = ""
     var number = n
-    while (number != 0) {
+    do {
         if (number % base < 9) {
             string += number % base
         } else {
             string += myList[number % base - 10]
         }
         number /= base
-    }
+    } while (number != 0)
     return string.reversed()
 }
 
@@ -380,7 +381,7 @@ fun russian(n: Int): String {
                 2 -> result.add(from0to2[z] + " " + thousands[1])
                 3, 4 -> result.add(from0to19[z] + " " + thousands[1])
                 in 5..19 -> result.add(from0to19[z] + " " + thousands[2])
-                20, 30, 40, 50, 60, 70, 80, 90 -> result.add(tens[(z - 20) / 10])
+                20, 30, 40, 50, 60, 70, 80, 90 -> result.add(tens[(z - 20) / 10] + " " + thousands[2])
                 else -> {
                     z = x / 10 % 10
                     when (x % 10) {
