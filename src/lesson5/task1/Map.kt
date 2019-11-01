@@ -1,6 +1,7 @@
 @file:Suppress("UNUSED_PARAMETER", "ConvertCallChainIntoSequence")
 
 package lesson5.task1
+import kotlin.math.max
 
 /**
  * Пример
@@ -234,8 +235,8 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    for (element in word) {
-        if (element in chars) {
+    for (element in word.toLowerCase()) {
+        if (element in chars || element.toUpperCase() in chars) {
             continue
         } else return false
     }
@@ -346,4 +347,32 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    val table: Array<Array<Int>> = Array(treasures.size + 1) { Array(capacity + 1) {0} }
+    val result = mutableSetOf<String>()
+
+    for (k in 1..treasures.size) {
+        for (s in 1..capacity) {
+            val a = treasures.getValue(treasures.keys.elementAt(k - 1))
+            if (s >= a.first) {
+                table[k][s] = max(table[k - 1][s], table[k - 1][s - a.first] + a.second)
+            } else {
+                table[k][s] = table[k - 1][s]
+            }
+        }
+
+    }
+
+    fun findAns(i: Int, j: Int) {
+        if (table[i][j] == 0) return
+        if (table[i - 1][j] == table[i][j]) findAns(i - 1, j)
+        else {
+            val b = treasures.getValue(treasures.keys.elementAt(i - 1))
+            findAns(i - 1, j - b.first)
+            result.add(treasures.keys.elementAt(i - 1))
+        }
+    }
+
+    findAns(treasures.size, capacity)
+    return result
+}

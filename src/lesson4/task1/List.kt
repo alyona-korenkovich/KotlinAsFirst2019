@@ -287,7 +287,7 @@ fun convertToString(n: Int, base: Int): String {
     var string = ""
     var number = n
     do {
-        if (number % base < 9) {
+        if (number % base <= 9) {
             string += number % base
         } else {
             string += myList[number % base - 10]
