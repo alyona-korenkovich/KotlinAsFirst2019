@@ -1,6 +1,7 @@
 @file:Suppress("UNUSED_PARAMETER", "ConvertCallChainIntoSequence")
 
 package lesson5.task1
+
 import kotlin.math.max
 
 /**
@@ -341,7 +342,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *   ) -> emptySet()
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
-    val table = Array(treasures.size + 1) { Array(capacity + 1) {0} }
+    val table = Array(treasures.size + 1) { Array(capacity + 1) { 0 } }
     val result = mutableSetOf<String>()
 
     for (k in 1..treasures.size) {
