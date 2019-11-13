@@ -140,10 +140,7 @@ fun abs(v: List<Double>): Double {
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double {
-    return if (list.isEmpty()) 0.0
-    else list.sum() / list.size
-}
+fun mean(list: List<Double>): Double = if (list.isEmpty()) 0.0 else (list.sum() / list.size)
 
 /**
  * Средняя
@@ -154,14 +151,11 @@ fun mean(list: List<Double>): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
-    return if (list.isEmpty()) list
-    else {
-        val mean = mean(list)
+    val mean = mean(list)
         for (i in 0 until list.size) {
             list[i] -= mean
         }
-        list
-    }
+    return list
 }
 
 /**
@@ -172,14 +166,9 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
  */
 fun times(a: List<Int>, b: List<Int>): Int {
-    val c = mutableListOf<Int>()
-    return if (a.isEmpty()) 0
-    else {
-        for (i in a.indices) {
-            c.add(a[i] * b[i])
-        }
-        c.sum()
-    }
+    var c = 0
+    for (i in a.indices) c += a[i] * b[i]
+    return c
 }
 
 /**
@@ -191,15 +180,10 @@ fun times(a: List<Int>, b: List<Int>): Int {
  * Значение пустого многочлена равно 0 при любом x.
  */
 fun polynom(p: List<Int>, x: Int): Int {
-    val a = mutableListOf<Int>()
+    var a = 0
     val b = x.toDouble()
-    return if (p.isEmpty()) 0
-    else {
-        for (i in p.indices) {
-            a.add(p[i] * (b.pow(i)).toInt())
-        }
-        a.sum()
-    }
+    for (i in p.indices) a += (p[i] * (b.pow(i)).toInt())
+    return a
 }
 
 /**
@@ -213,16 +197,10 @@ fun polynom(p: List<Int>, x: Int): Int {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Int>): MutableList<Int> {
-    val series = list.toMutableList()
-    return if (list.isEmpty()) list
-    else {
-        var sumOfPrevious = list.first()
-        for (i in 1 until list.size) {
-            list[i] += sumOfPrevious
-            sumOfPrevious += series[i]
-        }
-        return list
+    for (i in 1 until list.size) {
+        list[i] += list[i - 1]
     }
+    return list
 }
 
 /**
@@ -237,12 +215,12 @@ fun factorize(n: Int): List<Int> {
     var i = 2
     var number = n
     while (number != 1) {
-        if (number % i == 0 && isPrime(i)) {
+        if (number % i == 0) {
             number /= i
             list.add(i)
         } else i++
     }
-    return list.sorted()
+    return list
 }
 
 /**
@@ -283,7 +261,7 @@ fun convert(n: Int, base: Int): List<Int> {
  * (например, n.toString(base) и подобные), запрещается.
  */
 fun convertToString(n: Int, base: Int): String {
-    val myList = CharRange('a', 'z').toList()
+    val myList = ('a'..'z').toList()
     var string = ""
     var number = n
     do {

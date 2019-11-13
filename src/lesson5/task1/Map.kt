@@ -93,10 +93,9 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
-    val a = mutableMapOf<Int, List<String>>()
-    for ((name, grade) in grades) {
-        a[grade] = a.getOrDefault(grade, mutableListOf()) + name
-    }
+    val a = mutableMapOf<Int, MutableList<String>>()
+    for ((name, grade) in grades)
+        if (a[grade] == null) a[grade] = mutableListOf(name) else a[grade]?.add(name)
     return a
 }
 
@@ -144,11 +143,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit {
  * В выходном списке не должно быть повторяюихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    val firstList = a.toSet()
-    val secondList = b.toSet()
-    return (firstList.intersect(secondList).toList())
-}
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.toSet().intersect(b.toSet()).toList()
 
 /**
  * Средняя
@@ -235,12 +230,9 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    for (element in word.toLowerCase()) {
-        if (element in chars || element.toUpperCase() in chars) {
-            continue
-        } else return false
-    }
-    return true
+    val a = word.toLowerCase().toCharArray().toSet()
+    val b = chars.toSet()
+    return a.intersect(b) == a
 }
 
 /**
@@ -318,10 +310,11 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    val myList = list.toMutableList()
-    for (i in list) {
-        myList.remove(i)
-        if ((number - i) in myList) return Pair(list.indexOf(i), list.indexOf(number - i))
+    val a = mutableMapOf<Int, Int>()
+    for (x in list.indices) {
+        val b = number - list[x]
+        if (b !in a) a[x] = list[x]
+        else return Pair(list.indexOf(b), x)
     }
     return Pair(-1, -1)
 }
@@ -348,7 +341,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *   ) -> emptySet()
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
-    val table: Array<Array<Int>> = Array(treasures.size + 1) { Array(capacity + 1) {0} }
+    val table = Array(treasures.size + 1) { Array(capacity + 1) {0} }
     val result = mutableSetOf<String>()
 
     for (k in 1..treasures.size) {
