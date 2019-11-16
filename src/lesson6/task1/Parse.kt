@@ -73,17 +73,18 @@ fun main() {
  */
 fun dateStrToDigit(str: String): String {
     val a = str.split(" ")
-    return if (a.size == 3) {
+    val months = listOf(
+        "января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа",
+        "сентября", "октября", "ноября", "декабря"
+    )
+    if (a.size == 3) {
+        if (a[1] !in months) return ""
         val date = a.first().toInt()
         val month = a[1]
         val year = a.last().toInt()
-        val months = listOf(
-            "января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа",
-            "сентября", "октября", "ноября", "декабря"
-        )
-        if (a.isEmpty() || month !in months || daysInMonth(months.indexOf(month) + 1, year) < date) ""
+        return if (a.isEmpty() || month !in months || daysInMonth(months.indexOf(month) + 1, year) < date) ""
         else String.format("%02d.%02d.%d", date, (months.indexOf(month) + 1), year)
-    } else ""
+    } else return ""
 }
 
 /**
@@ -142,7 +143,7 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    return if (jumps.contains(Regex("[^[- %0123456789]]"))) -1
+    return if (jumps.contains(Regex("""[^\- %0123456789]"""))) -1
     else {
         val b = jumps.split(" ")
         val c = b.filter { it.contains(Regex("""\d""")) }.map { it.toInt() }
@@ -216,7 +217,7 @@ fun firstDuplicateIndex(str: String): Int {
     val string = str.toLowerCase().split(" ")
     if (string.isEmpty() || string.size == 1) return -1
     var r = -1
-    for (x in string.indices) {
+    for (x in 0 until string.size - 1) {
         if (string[x] == string[x + 1]) return r + 1
         r += string[x].length + 1
     }
@@ -237,7 +238,7 @@ fun firstDuplicateIndex(str: String): Int {
 fun mostExpensive(description: String): String {
     val a = description.split("; ")
     val regExp1 = Regex("""\d+""")
-    val regExp2 = Regex("[a-zA-Zа-яА-Яё]+")
+    val regExp2 = Regex(""".+\s""")
     var result = ""
     var maxPrice = 0.0
     for (x in a) {
@@ -246,7 +247,7 @@ fun mostExpensive(description: String): String {
         if (priceOfx != null) {
             if (priceOfx.toDouble() >= maxPrice) {
                 maxPrice = priceOfx.toDouble()
-                result = nameOfx.toString()
+                result = nameOfx.toString().substring(0..nameOfx!!.length - 2)
             }
         }
     }
