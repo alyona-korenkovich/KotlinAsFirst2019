@@ -231,8 +231,8 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    val a = word.toLowerCase().toCharArray().toSet()
-    val b = chars.toSet()
+    val a = word.toLowerCase().toSet()
+    val b = chars.toSet().map { it.toLowerCase() }
     return a.intersect(b) == a
 }
 
@@ -314,8 +314,8 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     val a = mutableMapOf<Int, Int>()
     for (x in list.indices) {
         val b = number - list[x]
-        if (b !in a) a[x] = list[x]
-        else return Pair(list.indexOf(b), x)
+        if (b !in a) a[list[x]] = x
+        else return Pair(a[b]!!, x)
     }
     return Pair(-1, -1)
 }

@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import lesson2.task2.daysInMonth
+
 /**
  * Пример
  *
@@ -79,9 +81,7 @@ fun dateStrToDigit(str: String): String {
             "января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа",
             "сентября", "октября", "ноября", "декабря"
         )
-        if (date !in 1..31 || month !in months ||
-            (!(year % 400 == 0 || ((year % 4 == 0 && year % 100 != 0))) && month == months[1] && date == 29)
-        ) ""
+        if (a.isEmpty() || month !in months || daysInMonth(months.indexOf(month) + 1, year) < date) ""
         else String.format("%02d.%02d.%d", date, (months.indexOf(month) + 1), year)
     } else ""
 }
@@ -98,8 +98,8 @@ fun dateStrToDigit(str: String): String {
  */
 fun dateDigitToStr(digital: String): String {
     val a = digital.split(".")
-    try {
-        return if (a.size == 3) {
+    return try {
+        if (a.size == 3) {
             val date = a.first().toInt()
             val month = a[1].toInt()
             val year = a.last().toInt()
@@ -107,13 +107,11 @@ fun dateDigitToStr(digital: String): String {
                 "января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа",
                 "сентября", "октября", "ноября", "декабря"
             )
-            if (date !in 1..31 || month !in 1..12 ||
-                (!(year % 400 == 0 || ((year % 4 == 0 && year % 100 != 0))) && month == 2 && date == 29)
-            ) ""
+            if (a.isEmpty() || month !in 1..12 || (daysInMonth(month, year) < date)) ""
             else String.format("%d %s %d", date, months[month - 1], year)
         } else ""
     } catch (e: NumberFormatException) {
-        return ""
+        ""
     }
 }
 
@@ -189,7 +187,7 @@ fun bestHighJump(jumps: String): Int {
 fun plusMinus(expression: String): Int {
     val a = expression.split(" ")
     val operators = listOf("+", "-")
-    var result = a.first().toInt()
+    var result = a[0].toIntOrNull() ?: throw IllegalArgumentException()
     val regExp = Regex("""((\d+)\s([+-])\s)*((\d+)$)""")
     if (expression.matches(regExp)) {
         if (a.size > 1) {
@@ -213,10 +211,16 @@ fun plusMinus(expression: String): Int {
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
+
 fun firstDuplicateIndex(str: String): Int {
-    val string = str.toLowerCase()
-    val regExp = Regex("""(.+)\s\1\s""").find(string)
-    return regExp?.range?.first() ?: -1
+    val string = str.toLowerCase().split(" ")
+    if (string.isEmpty() || string.size == 1) return -1
+    var r = -1
+    for (x in string.indices) {
+        if (string[x] == string[x + 1]) return r + 1
+        r += string[x].length + 1
+    }
+    return -1
 }
 
 /**
@@ -232,15 +236,15 @@ fun firstDuplicateIndex(str: String): Int {
  */
 fun mostExpensive(description: String): String {
     val a = description.split("; ")
-    val regExp1 = Regex("""\d+\.\d""")
-    val regExp2 = Regex("[а-яА-Яё]+")
+    val regExp1 = Regex("""\d+""")
+    val regExp2 = Regex("[a-zA-Zа-яА-Яё]+")
     var result = ""
     var maxPrice = 0.0
     for (x in a) {
         val priceOfx = regExp1.find(x)?.value
         val nameOfx = regExp2.find(x)?.value
         if (priceOfx != null) {
-            if (priceOfx.toDouble() > maxPrice) {
+            if (priceOfx.toDouble() >= maxPrice) {
                 maxPrice = priceOfx.toDouble()
                 result = nameOfx.toString()
             }
