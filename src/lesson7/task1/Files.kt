@@ -76,18 +76,21 @@ fun sibilants(inputName: String, outputName: String) {
             val newLine = mutableListOf<String>()
             val string = line.split(" ").toMutableList()
             for (word in string) {
-                if (word.contains(regEx) && word.length > 1 && !word[word.length - 1].toString().matches(regEx)) {
+                if (word.contains(regEx) && word.length > 1) {
                     val neededSymbol = regEx.find(word)!!.range.first() + 1
-                    val wordWithMistake = when (word[neededSymbol]) {
-                        'ы' -> word.replaceRange(neededSymbol, neededSymbol + 1, "и")
-                        'Ы' -> word.replaceRange(neededSymbol, neededSymbol + 1, "И")
-                        'я' -> word.replaceRange(neededSymbol, neededSymbol + 1, "а")
-                        'Я' -> word.replaceRange(neededSymbol, neededSymbol + 1, "А")
-                        'ю' -> word.replaceRange(neededSymbol, neededSymbol + 1, "у")
-                        'Ю' -> word.replaceRange(neededSymbol, neededSymbol + 1, "У")
-                        else -> word
+                    if (neededSymbol > word.length) continue
+                    else {
+                        val wordWithMistake = when (word[neededSymbol]) {
+                            'ы' -> word.replaceRange(neededSymbol, neededSymbol + 1, "и")
+                            'Ы' -> word.replaceRange(neededSymbol, neededSymbol + 1, "И")
+                            'я' -> word.replaceRange(neededSymbol, neededSymbol + 1, "а")
+                            'Я' -> word.replaceRange(neededSymbol, neededSymbol + 1, "А")
+                            'ю' -> word.replaceRange(neededSymbol, neededSymbol + 1, "у")
+                            'Ю' -> word.replaceRange(neededSymbol, neededSymbol + 1, "У")
+                            else -> word
+                        }
+                        newLine.add(wordWithMistake)
                     }
-                    newLine.add(wordWithMistake)
                 } else newLine.add(word)
             }
             outputStream.write(newLine.joinToString(" "))
@@ -118,7 +121,8 @@ fun centerFile(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
     var maxLineLength = 0
     for (line in File(inputName).readLines()) {
-        if (line.length > maxLineLength) maxLineLength = line.length
+        val newLine = line.trim()
+        if (newLine.length > maxLineLength) maxLineLength = newLine.length
     }
     for (line in File(inputName).readLines()) {
         val newLine = line.trim()
@@ -353,8 +357,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         if (line.isEmpty()) {
             outputStream.write("</p>\n" + "<p>")
             outputStream.newLine()
-        }
-        if (line.isNotEmpty()) {
+        } else {
             var resLine = line
             if (resLine.contains(Regex("""~~"""))) {
                 resLine = openOrCloseTag(resLine, "~~", "<s>", "</s>")
