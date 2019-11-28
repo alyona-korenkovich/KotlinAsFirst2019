@@ -75,12 +75,13 @@ fun sibilants(inputName: String, outputName: String) {
         if (line.contains(regEx)) {
             val newLine = mutableListOf<String>()
             val string = line.split(" ").toMutableList()
+            var wordWithMistake: String
             for (word in string) {
                 if (word.contains(regEx) && word.length > 1) {
                     val neededSymbol = regEx.find(word)!!.range.first() + 1
-                    if (neededSymbol > word.length) continue
+                    if (neededSymbol >= word.length) newLine.add(word)
                     else {
-                        val wordWithMistake = when (word[neededSymbol]) {
+                        wordWithMistake = when (word[neededSymbol]) {
                             'ы' -> word.replaceRange(neededSymbol, neededSymbol + 1, "и")
                             'Ы' -> word.replaceRange(neededSymbol, neededSymbol + 1, "И")
                             'я' -> word.replaceRange(neededSymbol, neededSymbol + 1, "а")
@@ -93,8 +94,8 @@ fun sibilants(inputName: String, outputName: String) {
                     }
                 } else newLine.add(word)
             }
-            outputStream.write(newLine.joinToString(" "))
-        } else outputStream.write(line)
+            outputStream.write(newLine.joinToString(" ").removeSuffix(" "))
+        } else outputStream.write(line.removeSuffix(" "))
         outputStream.newLine()
     }
     outputStream.close()
@@ -336,42 +337,36 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
 fun openOrCloseTag(line: String, delimiter: String, openTag: String, closeTag: String): String {
     var stateOfaTag = true
     val x = line.split(delimiter)
-    val newString = mutableListOf(x[0])
+    var newString = x[0]
     for (i in 1 until x.size) {
         stateOfaTag = if (stateOfaTag) {
-            newString.add(openTag)
+            newString += openTag
             false
         } else {
-            newString.add(closeTag)
+            newString += closeTag
             true
         }
-        newString.add(x[i])
+        newString += x[i]
     }
-    return newString.joinToString("")
+    return newString
 }
 
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
-    outputStream.write("<html>\n" + "<body>\n" + "<p>")
-    for (line in File(inputName).readLines()) {
-        if (line.isEmpty()) {
-            outputStream.write("</p>\n" + "<p>")
-            outputStream.newLine()
+    outputStream.write("<html><body><p>")
+    var text = ""
+    val a = File(inputName).readLines()
+    for (line in a) {
+        text += if (line.isEmpty() && (a.indexOf(line) != 0) && (a.indexOf(line) != a.size - 1) ) {
+            "</p>" + "<p>"
         } else {
-            var resLine = line
-            if (resLine.contains(Regex("""~~"""))) {
-                resLine = openOrCloseTag(resLine, "~~", "<s>", "</s>")
-            }
-            if (resLine.contains(Regex("""\*\*"""))) {
-                resLine = openOrCloseTag(resLine, "**", "<b>", "</b>")
-            }
-            if (resLine.contains(Regex("""\*"""))) {
-                resLine = openOrCloseTag(resLine, "*", "<i>", "</i>")
-            }
-            outputStream.write(resLine)
+            line
         }
     }
-    outputStream.write("</p>\n" + "</body>\n" + "</html>")
+    var resLine = openOrCloseTag(text, "~~", "<s>", "</s>")
+    resLine = openOrCloseTag(resLine, "**", "<b>", "</b>")
+    resLine = openOrCloseTag(resLine, "*", "<i>", "</i>")
+    outputStream.write("$resLine</p></body></html>")
     outputStream.close()
 }
 
