@@ -342,14 +342,16 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
     outputStream.write("<html><body><p>")
     var text = ""
+    var b = ""
     val a = File(inputName).readLines()
     for (line in a) {
         text += if (line.isEmpty() && (a.indexOf(line) != 0) && (a.indexOf(line) != a.size - 1)
-            && (a.elementAt(a.indexOf(line) - 1)).isNotEmpty()) {
+            && (b.isNotEmpty())) {
             "</p>" + "<p>"
         } else {
             line
         }
+        b = line
     }
     var resLine = openOrCloseTag(text, "~~", "<s>", "</s>")
     resLine = openOrCloseTag(resLine, "**", "<b>", "</b>")
