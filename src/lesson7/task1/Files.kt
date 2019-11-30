@@ -69,33 +69,20 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
+    val map = mapOf ("ы" to "и", "Ы" to "И", "ю" to "у", "Ю" to "У", "я" to "а", "Я" to "А")
     val outputStream = File(outputName).bufferedWriter()
-    val regEx = Regex("""[ЖжЧчШшЩщ]""")
+    val regEx = Regex("""(?<=[ЖжЧчШшЩщ])[ЫыЮюЯя]""")
     for (line in File(inputName).readLines()) {
         if (line.contains(regEx)) {
             val newLine = mutableListOf<String>()
-            val string = line.split(" ").toMutableList()
-            var wordWithMistake: String
-            for (word in string) {
-                if (word.contains(regEx) && word.length > 1) {
-                    val neededSymbol = regEx.find(word)!!.range.first() + 1
-                    if (neededSymbol >= word.length) newLine.add(word)
-                    else {
-                        wordWithMistake = when (word[neededSymbol]) {
-                            'ы' -> word.replaceRange(neededSymbol, neededSymbol + 1, "и")
-                            'Ы' -> word.replaceRange(neededSymbol, neededSymbol + 1, "И")
-                            'я' -> word.replaceRange(neededSymbol, neededSymbol + 1, "а")
-                            'Я' -> word.replaceRange(neededSymbol, neededSymbol + 1, "А")
-                            'ю' -> word.replaceRange(neededSymbol, neededSymbol + 1, "у")
-                            'Ю' -> word.replaceRange(neededSymbol, neededSymbol + 1, "У")
-                            else -> word
-                        }
-                        newLine.add(wordWithMistake)
-                    }
+            for (word in line.split(" ")) {
+                if (word.contains(regEx)) {
+                    val a = regEx.find(word)!!.value
+                    newLine.add(word.replace(regEx, map.getValue(a)))
                 } else newLine.add(word)
             }
-            outputStream.write(newLine.joinToString(" ").removeSuffix(" "))
-        } else outputStream.write(line.removeSuffix(" "))
+            outputStream.write(newLine.joinToString(" "))
+        } else outputStream.write(line)
         outputStream.newLine()
     }
     outputStream.close()
@@ -357,7 +344,8 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     var text = ""
     val a = File(inputName).readLines()
     for (line in a) {
-        text += if (line.isEmpty() && (a.indexOf(line) != 0) && (a.indexOf(line) != a.size - 1) ) {
+        text += if (line.isEmpty() && (a.indexOf(line) != 0) && (a.indexOf(line) != a.size - 1)
+            && (a.elementAt(a.indexOf(line) - 1)).isNotEmpty()) {
             "</p>" + "<p>"
         } else {
             line
