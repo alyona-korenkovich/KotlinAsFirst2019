@@ -69,7 +69,7 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    val map = mapOf ("ы" to "и", "Ы" to "И", "ю" to "у", "Ю" to "У", "я" to "а", "Я" to "А")
+    val map = mapOf("ы" to "и", "Ы" to "И", "ю" to "у", "Ю" to "У", "я" to "а", "Я" to "А")
     val outputStream = File(outputName).bufferedWriter()
     val regEx = Regex("""(?<=[ЖжЧчШшЩщ])[ЫыЮюЯя]""")
     for (line in File(inputName).readLines()) {
@@ -77,8 +77,12 @@ fun sibilants(inputName: String, outputName: String) {
             val newLine = mutableListOf<String>()
             for (word in line.split(" ")) {
                 if (word.contains(regEx)) {
-                    val a = regEx.find(word)!!.value
-                    newLine.add(word.replace(regEx, map.getValue(a)))
+                    val a = regEx.findAll(word)
+                    var newWord = word
+                    for (x in a) {
+                        newWord = newWord.replace(x.value, map.getValue(x.value))
+                    }
+                    newLine.add(newWord)
                 } else newLine.add(word)
             }
             outputStream.write(newLine.joinToString(" "))
@@ -346,12 +350,14 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val a = File(inputName).readLines()
     for (line in a) {
         text += if (line.isEmpty() && (a.indexOf(line) != 0) && (a.indexOf(line) != a.size - 1)
-            && (b.isNotEmpty())) {
+            && (b.isNotEmpty())
+        ) {
             "</p>" + "<p>"
         } else {
             line
         }
         b = line
+        text += "\n"
     }
     var resLine = openOrCloseTag(text, "~~", "<s>", "</s>")
     resLine = openOrCloseTag(resLine, "**", "<b>", "</b>")
