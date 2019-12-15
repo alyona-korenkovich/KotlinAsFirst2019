@@ -348,12 +348,11 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val stringBuilder = StringBuilder()
     var b = ""
     val a = File(inputName).readLines()
-    for (line in a) {
-        if (line.isEmpty() && (a.indexOf(line) != 0) && (a.indexOf(line) != a.size - 1)
-            && (b.isNotEmpty())
+    for (lineIndex in a.indices) {
+        if (a[lineIndex].isEmpty() && (lineIndex != 0) && (lineIndex != a.size - 1) && (b.isNotEmpty())
         ) stringBuilder.append("</p>" + "<p>")
-        else stringBuilder.append(line)
-        b = line
+        else stringBuilder.append(a[lineIndex])
+        b = a[lineIndex]
         stringBuilder.append("\n")
     }
     var resLine = openOrCloseTag(stringBuilder.toString(), "~~", "<s>", "</s>")
