@@ -69,23 +69,20 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    val map = mapOf("ы" to "и", "Ы" to "И", "ю" to "у", "Ю" to "У", "я" to "а", "Я" to "А")
     val outputStream = File(outputName).bufferedWriter()
-    val regEx = Regex("""(?<=[ЖжЧчШшЩщ])[ЫыЮюЯя]""")
-    for (line in File(inputName).readLines()) {
-        if (line.contains(regEx)) {
-            val newLine = mutableListOf<String>()
-            for (word in line.split(" ")) {
-                if (word.contains(regEx)) {
-                    val a = regEx.findAll(word)
-                    var newWord = word
-                    for (x in a) {
-                        newWord = newWord.replace(x.value, map.getValue(x.value))
-                    }
-                    newLine.add(newWord)
-                } else newLine.add(word)
+    val toReplace = mapOf("ы" to "и", "Ы" to "И", "ю" to "у", "Ю" to "У", "я" to "а", "Я" to "А")
+    val file = File(inputName).readLines()
+    val regExp1 = Regex("""[ЖжЧчШшЩщ]""")
+    val regExp2 = Regex("""[ЫыЮюЯя]""")
+    for (line in file) {
+        if (line.contains(regExp2)) {
+            val newLine = StringBuilder()
+            newLine.append(line[0])
+            for (i in 1 until line.length) {
+                if (line[i].toString().matches(regExp2) && (line[i - 1].toString().matches(regExp1)))
+                    newLine.append(toReplace.getValue(line[i].toString())) else newLine.append(line[i])
             }
-            outputStream.write(newLine.joinToString(" "))
+            outputStream.write(newLine.toString())
         } else outputStream.write(line)
         outputStream.newLine()
     }
@@ -112,7 +109,8 @@ fun sibilants(inputName: String, outputName: String) {
 fun centerFile(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
     var maxLineLength = 0
-    for (line in File(inputName).readLines()) {
+    val fileInput = File(inputName).readLines()
+    for (line in fileInput) {
         val newLine = line.trim()
         if (newLine.length > maxLineLength) maxLineLength = newLine.length
     }
@@ -161,7 +159,8 @@ fun alignFileByWidth(inputName: String, outputName: String) {
         val a = newLine.split(" ").joinToString("")
         if (a.contains(Regex("""[^ ]""")) && newLine.length > maxLineLength) maxLineLength = newLine.length
     }
-    for (line in File(inputName).readLines()) {
+    val fileInput = File(inputName).readLines()
+    for (line in fileInput) {
         val newLine = line.trim()
         val words = Regex("""\s+""").split(newLine)
         if (words.size <= 1) {
@@ -328,38 +327,36 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
 fun openOrCloseTag(line: String, delimiter: String, openTag: String, closeTag: String): String {
     var stateOfaTag = true
     val x = line.split(delimiter)
-    var newString = x[0]
+    val newString = StringBuilder()
+    newString.append(x[0])
     for (i in 1 until x.size) {
         stateOfaTag = if (stateOfaTag) {
-            newString += openTag
+            newString.append(openTag)
             false
         } else {
-            newString += closeTag
+            newString.append(closeTag)
             true
         }
-        newString += x[i]
+        newString.append(x[i])
     }
-    return newString
+    return newString.toString()
 }
 
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
     outputStream.write("<html><body><p>")
-    var text = ""
+    val stringBuilder = StringBuilder()
     var b = ""
     val a = File(inputName).readLines()
     for (line in a) {
-        text += if (line.isEmpty() && (a.indexOf(line) != 0) && (a.indexOf(line) != a.size - 1)
+        if (line.isEmpty() && (a.indexOf(line) != 0) && (a.indexOf(line) != a.size - 1)
             && (b.isNotEmpty())
-        ) {
-            "</p>" + "<p>"
-        } else {
-            line
-        }
+        ) stringBuilder.append("</p>" + "<p>")
+        else stringBuilder.append(line)
         b = line
-        text += "\n"
+        stringBuilder.append("\n")
     }
-    var resLine = openOrCloseTag(text, "~~", "<s>", "</s>")
+    var resLine = openOrCloseTag(stringBuilder.toString(), "~~", "<s>", "</s>")
     resLine = openOrCloseTag(resLine, "**", "<b>", "</b>")
     resLine = openOrCloseTag(resLine, "*", "<i>", "</i>")
     outputStream.write("$resLine</p></body></html>")
