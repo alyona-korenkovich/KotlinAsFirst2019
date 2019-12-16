@@ -114,7 +114,7 @@ fun centerFile(inputName: String, outputName: String) {
         val newLine = line.trim()
         if (newLine.length > maxLineLength) maxLineLength = newLine.length
     }
-    for (line in File(inputName).readLines()) {
+    for (line in fileInput) {
         val newLine = line.trim()
         val n = (maxLineLength - newLine.length) / 2
         outputStream.write(" ".repeat(n))
@@ -154,12 +154,12 @@ fun centerFile(inputName: String, outputName: String) {
 fun alignFileByWidth(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
     var maxLineLength = 0
-    for (line in File(inputName).readLines()) {
+    val fileInput = File(inputName).readLines()
+    for (line in fileInput) {
         val newLine = line.trim()
         val a = newLine.split(" ").joinToString("")
         if (a.contains(Regex("""[^ ]""")) && newLine.length > maxLineLength) maxLineLength = newLine.length
     }
-    val fileInput = File(inputName).readLines()
     for (line in fileInput) {
         val newLine = line.trim()
         val words = Regex("""\s+""").split(newLine)
