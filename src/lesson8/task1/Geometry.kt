@@ -152,8 +152,7 @@ class Line private constructor(val b: Double, val angle: Double) {
      */
     fun crossPoint(other: Line): Point {
         val x = (other.b * cos(angle) - b * cos(other.angle)) / sin(angle - other.angle)
-        val y = if (angle == PI / 2) (x * sin(other.angle) + other.b) / cos(other.angle)
-        else (x * sin(angle) + b) / cos(angle)
+        val y = (b * sin(other.angle) - other.b * sin(angle)) / sin(other.angle - angle)
         return Point(x, y)
     }
 
@@ -243,6 +242,8 @@ fun minContainingCircle(vararg points: Point): Circle {
         for (j in i + 1 until points.size - 1) {
             for (k in j + 1 until points.size) {
                 if (points[i] == points[j] || points[j] == points[k] || points[i] == points[k]) continue
+                if ((points[i].x == points[j].x && points[j].x == points[k].x) ||
+                    (points[i].y == points[j].y && points[j].y == points[k].y)) continue
                 val currCircle = circleByThreePoints(points[i], points[j], points[k])
                 if (points.all { currCircle.contains(it) } && currCircle.radius < minRadius)
                     minRadius = currCircle.radius
