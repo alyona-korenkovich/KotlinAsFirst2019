@@ -236,8 +236,10 @@ fun minContainingCircle(vararg points: Point): Circle {
     require(points.isNotEmpty())
     if (points.size == 1) return Circle(points[0], 0.0)
     if (points.size == 2) return circleByDiameter(diameter(points[0], points[1]))
-    var minRadius = points[0].distance(points[1]) / 2
     var circle = circleByDiameter(diameter(*points))
+    var minRadius: Double
+    minRadius = if (points.all { circle.contains(it) }) circle.radius
+    else Double.MAX_VALUE
     for (i in 0 until points.size - 2) {
         for (j in i + 1 until points.size - 1) {
             for (k in j + 1 until points.size) {
@@ -245,9 +247,10 @@ fun minContainingCircle(vararg points: Point): Circle {
                 if ((points[i].x == points[j].x && points[j].x == points[k].x) ||
                     (points[i].y == points[j].y && points[j].y == points[k].y)) continue
                 val currCircle = circleByThreePoints(points[i], points[j], points[k])
-                if (points.all { currCircle.contains(it) } && currCircle.radius < minRadius)
+                if (points.all { currCircle.contains(it) } && currCircle.radius < minRadius) {
                     minRadius = currCircle.radius
-                circle = currCircle
+                    circle = currCircle
+                }
             }
         }
     }
